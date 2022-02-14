@@ -18,17 +18,13 @@ def cloud_generator():
                 "if", "how", "into", "from", "will", "people", "rumble"]
 
     d = path.dirname(__file__) if "__file__" in locals() else os.getcwd()
-
     try:
         text = open(path.join(d, 'replies.txt'), encoding='cp1252').read()
     except UnicodeDecodeError:
         text = open(path.join(d, 'replies.txt'), encoding='utf-8').read()
-
     wordcloud = WordCloud(scale=5, max_font_size=72, max_words=2000, background_color=(16, 16, 16), mode = 'RGBA', relative_scaling=.5).generate(text)
     image = wordcloud.to_image()
     image.show()
-
-
 
 def strip_html(text):
     a = text.replace('&gt;', '>')
@@ -54,7 +50,7 @@ def get_OPs(board):
             print('')
     f.close()
 
-def get_thread_cloud(board, thread_no):
+def get_word_cloud(board, thread_no):
     r = requests.get('https://a.4cdn.org/{}/thread/{}.json'.format(board, thread_no))
     r = r.json()
     try:
@@ -67,7 +63,6 @@ def get_thread_cloud(board, thread_no):
             f.write(strip_html(post['com']))
         except KeyError:
             print('')
-    
     f.close()
     cloud_generator()
 
@@ -78,12 +73,13 @@ def get_images(board, thread_no):
     i = 1
     thread_name = strip_html(r['posts'][0]['semantic_url'])
     try:
-        path = os.path.join('S:\\Pictures\\4ch\\', str(thread_name))
-        
-        os.mkdir(path)
+        #path = os.path.join('/Pictures/4ch/', str(thread_name))
+        user_relative_picture_folder = os.path.expanduser('~/Pictures/4ch/')
+        path = user_relative_picture_folder + str(thread_name)
+        os.makedirs(path)
         print('Created folder {}'.format(thread_name))
     except:
-        print('Folder already exists')
+        print('Did not create folder.')
     for post in r['posts']:
         try:
             img = str(post['tim']) + str(post['ext'])
@@ -93,9 +89,8 @@ def get_images(board, thread_no):
                 file_name = img
             url = domain + img
             response = requests.get(url)
-            # sub = r['sub']
-            # print(sub)
-            save_path = path + '\\' + file_name + str(post['ext'])
+            
+            save_path = path + '/' + file_name + str(post['ext'])
             with open(save_path, 'wb') as f:
                 f.write(response.content)
             #os.system('cls||clear')
@@ -104,4 +99,4 @@ def get_images(board, thread_no):
         except KeyError:
             pass
     
-get_thread_cloud('pol', 361090167)
+get_images('pol', 361135648)

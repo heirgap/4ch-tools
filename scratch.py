@@ -1,4 +1,5 @@
 import os
-dirname = os.path.dirname(__file__)
 
-print(dirname)
+a = os.path.expanduser('~/Pictures/4ch')
+
+print(a)
