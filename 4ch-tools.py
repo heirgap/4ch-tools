@@ -19,10 +19,10 @@ def cloud_generator():
 
     d = path.dirname(__file__) if "__file__" in locals() else os.getcwd()
     try:
-        text = open(path.join(d, 'replies.txt'), encoding='cp1252').read()
+        text = open(path.join(d, 'replies.txt'), encoding = 'cp1252').read()
     except UnicodeDecodeError:
-        text = open(path.join(d, 'replies.txt'), encoding='utf-8').read()
-    wordcloud = WordCloud(scale=5, max_font_size=72, max_words=2000, background_color=(16, 16, 16), mode = 'RGBA', relative_scaling=.5).generate(text)
+        text = open(path.join(d, 'replies.txt'), encoding = 'utf-8').read()
+    wordcloud = WordCloud(stopword = stopwords, scale = 5, max_font_size = 72, max_words = 2000, background_color = (16, 16, 16), mode = 'RGBA', relative_scaling = .5).generate(text)
     image = wordcloud.to_image()
     image.show()
 
