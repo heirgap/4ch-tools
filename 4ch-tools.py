@@ -1,7 +1,9 @@
 from concurrent.futures import thread
+from matplotlib.pyplot import get
 from numpy import full
 import requests
 import os
+import sys
 import re
 from os import path
 from wordcloud import WordCloud
@@ -22,7 +24,7 @@ def cloud_generator():
         text = open(path.join(d, 'replies.txt'), encoding = 'cp1252').read()
     except UnicodeDecodeError:
         text = open(path.join(d, 'replies.txt'), encoding = 'utf-8').read()
-    wordcloud = WordCloud(stopword = stopwords, scale = 5, max_font_size = 72, max_words = 2000, background_color = (16, 16, 16), mode = 'RGBA', relative_scaling = .5).generate(text)
+    wordcloud = WordCloud(stopwords = stopwords, scale = 5, max_font_size = 72, max_words = 2000, background_color = (16, 16, 16), mode = 'RGBA', relative_scaling = .5).generate(text)
     image = wordcloud.to_image()
     image.show()
 
@@ -51,6 +53,7 @@ def get_OPs(board):
     f.close()
 
 def get_word_cloud(board, thread_no):
+    
     r = requests.get('https://a.4cdn.org/{}/thread/{}.json'.format(board, thread_no))
     r = r.json()
     try:
@@ -59,7 +62,7 @@ def get_word_cloud(board, thread_no):
         f = open('replies.txt', 'w', encoding='cp1252')
     for post in r['posts']:
         try: 
-            os.system('cls||clear')
+            #os.system('cls||clear')
             f.write(strip_html(post['com']))
         except KeyError:
             print('')
@@ -98,5 +101,13 @@ def get_images(board, thread_no):
             i += 1
         except KeyError:
             pass
-    
-get_images('pol', 361135648)
+
+def main():
+    url = sys.argv[2]
+    url = url.split('/')
+    if sys.argv[1] == '-i':
+        get_images(url[3], url[5])
+    if sys.argv[1] == '-wc':
+        get_word_cloud(url[3], url[5])
+
+main()
